@@ -25,7 +25,7 @@ typedef struct {
     int annee;
 }Date;
 typedef struct emprunt_Livre{
-    Livres L;
+    Livres *L;
     Date emprunter;
     Date retourner;
     struct emprunt_Livre *suivant;

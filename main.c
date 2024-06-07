@@ -29,7 +29,10 @@ int main(){
             switch(choix){
                 case 1:Afficher_Livre(l);
                         break;
-                case 2:chercher_Livre(l);
+                case 2:{
+                    l=ajouter_de_liste();
+                    chercher_Livre(l);
+                }
                     break;
                 case 3:l=Demander_Livre(l);
                     break;

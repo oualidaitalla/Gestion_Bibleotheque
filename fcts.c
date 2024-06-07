@@ -9,7 +9,7 @@ Livres *Ajouter_Livre(Livres *p){     //Enregistrer les information d'un livres 
     InfoLivre *nouveau=(InfoLivre*)malloc(sizeof(InfoLivre));
     Livres *L=(Livres*)malloc(sizeof(Livres));
     FILE* ouvrir=NULL;
-    printf("!!!! Tout donnee de type chaine de caractere ne compte pas tout qui apres un espace (Victor Hugo X)(Victor_Hugo V)!!!!\n \n"); // le systeme linux ne peut pas executer la fonction gets correctement !!
+    printf("!!!! Tout donnee de type chaine de caractere ne compte pas tout qui apres un espace (structure donnee)=(structure_donnee)!!!!\n \n"); // le systeme linux ne peut pas executer la fonction gets correctement !!
     ouvrir=fopen("Liste_Livres.txt", "a+");
     if(ouvrir!=NULL){                  // Saisir les information d'un livre
         printf("\t\tSaisir le nom du livre :");
@@ -53,8 +53,8 @@ Livres *supprimer_Livre(Livres *L){
         if(trL->Livre->ISBN!=ISBN){
             time++;
         }
-            t++;
-            trL=trL->suivant;
+        t++;
+        trL=trL->suivant;
     }
     if(t==time){
         printf("L'ISBN ne correspond pas a aucun livre dans la bibleotheque mondiale \n");
@@ -159,11 +159,11 @@ Livres *Modifier_Info_Livre(Livres *L){ //modification d'une information d'un li
                 scanf("%d" , &pL->Livre->Date_pub);
                 }
             default:
-                
                    printf("choix du menu 1 de (1 a 6) :");
         }
                   
     pL=pL->suivant;
+    break;
     }
     return pL;
 }
@@ -171,7 +171,7 @@ Livres *Modifier_Info_Livre(Livres *L){ //modification d'une information d'un li
 void Afficher_Livres_emprunter(emprunt_Livre *L){
     printf("\t\t\tles livres empruntee sont:\n");
     while(L!=NULL){
-        printf("\t\t\t\t %s:de %d/%s/%d a %d/%s/%d \n",L->L.Livre->titre, L->emprunter.jour, L->emprunter.moix, L->emprunter.annee, L->retourner.jour, L->retourner.moix,L->retourner.annee);
+        printf("\t\t\t\t %s:de %d/%s/%d a %d/%s/%d \n",L->L->Livre->titre, L->emprunter.jour, L->emprunter.moix, L->emprunter.annee, L->retourner.jour, L->retourner.moix,L->retourner.annee);
         L=L->suivant;
     }
  }
@@ -313,7 +313,7 @@ void Lire_Enligne(Livres *L) {
     int time=0,t=0;
     printf("\t\tSaisir le titre du livre a emprunter :");
     scanf(" %s",titre);
-    while(ppL!=NULL){
+    /*while(ppL!=NULL){
         if(strcmp(titre, L->Livre->titre)!=0)
             t++;
         time++;
@@ -322,7 +322,7 @@ void Lire_Enligne(Livres *L) {
     if(time==t){
         printf("Aucun livre de nom :%s dans la bibleotheque mondiale \n",titre);
         return NULL;
-    }
+    }*/
     while(L!=NULL){
         if(strcmp(L->Livre->titre, titre)==0){      //si le tlivre existe dans la bibleotheque alors on continue
             printf("Saisir la date de d'emprunter (date d'ajoudhui )[jour , mois, annee] :\n");     // entrer la date champ par champ
@@ -333,10 +333,10 @@ void Lire_Enligne(Livres *L) {
             scanf("%d",&emp->retourner.jour);
             scanf(" %s", &emp->retourner.moix);
             scanf("%d", &emp->retourner.annee);
-            emp->L.Livre=L->Livre;
+            emp->L=L;
             ouvrir=fopen("Livres_emprunter.txt","a+");    
             if(ouvrir!=NULL){ // enregistrer les livres emprunter dans le ficher Livres emprunter
-                fprintf(ouvrir,"%s: de %d/%s/%d a %d/%s/%d \n", emp->L.Livre->titre,emp->emprunter.jour,emp->emprunter.moix,emp->emprunter.annee, emp->retourner.jour, emp->retourner.moix, emp->retourner.annee);
+                fprintf(ouvrir,"%s: de %d/%s/%d a %d/%s/%d \n", emp->L->Livre->titre,emp->emprunter.jour,emp->emprunter.moix,emp->emprunter.annee, emp->retourner.jour, emp->retourner.moix, emp->retourner.annee);
             }fclose(ouvrir);
         }
         L=L->suivant;
@@ -352,30 +352,32 @@ void Lire_Enligne(Livres *L) {
     char line[MAX];
         while(fgets(line, sizeof(line), ouvrir)){
             emprunt_Livre *ELR=(emprunt_Livre*)malloc(sizeof(emprunt_Livre));               
-             sscanf(line, "%[^:]: de %d/%[^/]/%d a %d/%[^/]/%d \n", ELR->L.Livre->titre, &ELR->emprunter.jour, ELR->emprunter.moix, &ELR->emprunter.annee, &ELR->retourner.jour, ELR->retourner.moix, &ELR->retourner.annee);
+             sscanf(line, "%[^:]: de %d/%[^/]/%d a %d/%[^/]/%d \n", ELR->L->Livre->titre, &ELR->emprunter.jour, ELR->emprunter.moix, &ELR->emprunter.annee, &ELR->retourner.jour, ELR->retourner.moix, &ELR->retourner.annee);
             ELR->suivant=NULL;
             if(AL==NULL){
                 AL=ELR;
-
                 EL=ELR;
+                return AL;
             }else{
                 EL->suivant=ELR;
                 EL=EL->suivant;
+                return EL;
             }
 
         }
         fclose(ouvrir);
-        return AL;
 }
 //=========================================================================================================
 
 char principale(){
     char  choix;
-    printf("\t\t\t\t >>>#@#@#@#@#@#@#@#@#@#@#@#@#@@##@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@<<<\n\n");
-    printf("\t\t\t\t   >>>          |**|Bienvenu dans votre mondial Bibeleotheque            <<< \n");
-    printf("\t\t\t\t    >>>>        @*******@: Votre espace Utilisatuer :@*******@        <<<< \n");
-    printf("\t\t\t\t   >>>          #*******#:    Votre compte Admin    :#*******#           <<< \n\n");
-    printf("\t\t\t\t >>>#@@#@#@#@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@<<<\n");
+    printf("\t\t >>>#@#@#@#@#@#@#@#@#@#@#@#@#@@##@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@##@#@#@#@#@<<<\n\n");
+    printf("\t\t   >>>          |**|Bienvenu dans votre mondial Bibeleotheque            <<< \n");
+    printf("\t\t    >>>>        @*******@: Votre espace Utilisatuer :@*******@        <<<< \n");
+    printf("\t\t   >>>          #*******#:    Votre compte Admin    :#*******#           <<< \n\n");
+    printf("\t\tL'espace  admin  en  apuuyant    sur # pour effectuer des operation d'ajouter ,suprimer,modifier des livres \n");
+    printf("\t\tL'espace utilisateur en appuyant sur @ pour decouvrir o chercher ou demander ,emprunter les livres \n");
+    printf("\t\t >>>#@@#@#@#@#@#@#@#@#@#@#@#@##@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@#@<<<\n");
     do{
         printf("\n\t\t\t\t\t\t\t\t");
         scanf("%c", &choix);
